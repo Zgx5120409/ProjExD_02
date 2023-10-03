@@ -28,12 +28,12 @@ def main():
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
     kk_img = pg.image.load("ex02/fig/3.png")
+    kk_img_game_over = pg.image.load("ex02/fig/0.png")
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
     kk_img_game_over = pg.transform.rotozoom(kk_img_game_over, 0, 2.0)
 
     kk_rct = kk_img.get_rect()
     kk_rct.center = (900, 400)
-    game_over = False #追加機能3：ゲームオーバーのフラグ 
     bd_img = pg.Surface((20, 20))
     bd_img.set_colorkey((0,0,0))
     pg.draw.circle(bd_img, (255, 0, 0), (10, 10), 10)
@@ -44,6 +44,7 @@ def main():
     clock = pg.time.Clock()
     tmr = 0
     game_over = False
+    game_over_time = 3000
     bom_imgs = []
     for r in range(1, 11):
         bom_img = pg.Surface((20 * r, 20 * r))
@@ -64,7 +65,7 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
-        if kk_rct.colliderect(bd_rct):  # 練習５：ぶつかってたら
+        if not game_over and kk_rct.colliderect(bd_rct):  # 練習５：ぶつかってたら
             print("ゲームオーバー")
             return
         key_lst = pg.key.get_pressed()
@@ -93,8 +94,8 @@ def main():
         if check_bound(kk_rct) != (True, True):  # 練習４：はみだし判定
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1]) 
         screen.blit(kk_img, kk_rct)
-
-        bd_rct.move_ip(vx + 0.001*tmr, vy + 0.001*tmr)  # 練習２：爆弾を移動させる
+     
+        bd_rct.move_ip(vx + 0.01*tmr, vy + 0.01*tmr)  # 追加機能２：爆弾を加速させる
         yoko, tate = check_bound(bd_rct)
         if not yoko:  # 練習４：横方向にはみ出たら
             vx *= -1
@@ -102,12 +103,12 @@ def main():
             vy *= -1
         screen.blit(bd_img, bd_rct)
         if game_over:
-            screen.blit(kk_img2, kk_rct)
+            screen.blit(kk_img, kk_rct)
         else:
             screen.blit(kk_img, kk_rct)
         pg.display.update()
         tmr += 1
-        clock.tick(100)
+        clock.tick(50)
 
 if __name__ == "__main__":
     pg.init()
