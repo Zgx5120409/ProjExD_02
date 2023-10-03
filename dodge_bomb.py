@@ -39,7 +39,8 @@ def main():
     x, y = random.randint(0,WIDTH),random.randint(0,HEIGHT)
     bd_rct.center = (x,y)
     vx, vy = +5, +5
-
+    bd_imgs = []
+    accs = [a for a in range(1, 11)]
     clock = pg.time.Clock()
     tmr = 0
     
@@ -64,7 +65,7 @@ def main():
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1]) 
         screen.blit(kk_img, kk_rct)
 
-        bd_rct.move_ip(vx, vy)  # 練習２：爆弾を移動させる
+        bd_rct.move_ip(vx**2, vy**2)  # 練習２：爆弾を移動させる
         yoko, tate = check_bound(bd_rct)
         if not yoko:  # 練習４：横方向にはみ出たら
             vx *= -1
@@ -73,7 +74,13 @@ def main():
         screen.blit(bd_img, bd_rct) 
         pg.display.update()
         tmr += 1
-        clock.tick(50)
+        clock.tick(300)
+        for r in range(1, 11): #追加機能２　時間とともに爆弾が加速する
+            bd_img = pg.Surface((20*r, 20*r))
+            pg.draw.circle(bd_img, (255, 0, 0), (10*r, 10*r), 10*r)
+            bd_imgs.append(bd_img)
+            bd_img.set_colorkey((0, 0, 0))
+        bd_img = bd_imgs[min(tmr//500, 9)]
 
 
 if __name__ == "__main__":
